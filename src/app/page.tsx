@@ -24,9 +24,10 @@ const getCategory = async () => {
 export default async function Home() {
   const data = await getCategory();
 
+
   return (
     <main>
-      <MainPage data={data} />
+      <MainPage boba={data.api_data.aProduct} />
     </main>
   );
 }
