@@ -1,3 +1,83 @@
 {
-  "extends": "next/core-web-vitals"
+	"parser": "@typescript-eslint/parser",
+	"parserOptions": {
+		"sourceType": "module",
+		"ecmaVersion": 2022
+	},
+	"plugins": [
+		"@typescript-eslint/eslint-plugin",
+		"react",
+		"react-hooks",
+		"prettier"
+	],
+	"env": {
+		"browser": true,
+		"node": true,
+		"es6": true
+	},
+	"extends": [
+		"next/core-web-vitals",
+		"eslint:recommended",
+		"plugin:@typescript-eslint/recommended",
+		"plugin:react/recommended",
+		"plugin:react-hooks/recommended",
+		"plugin:import/errors",
+		"plugin:import/warnings",
+		"plugin:import/typescript",
+		"plugin:prettier/recommended"
+	],
+	"rules": {
+		"@typescript-eslint/explicit-module-boundary-types": "off",
+		"@typescript-eslint/no-explicit-any": "off",
+		"@typescript-eslint/no-non-null-assertion": "off",
+		"@typescript-eslint/no-unused-vars": [
+			"error",
+			{ "argsIgnorePattern": "^_" }
+		],
+		"react/prop-types": "off",
+		"react/react-in-jsx-scope": "off",
+		"react/display-name": "off",
+		"react/jsx-props-no-spreading": "off",
+		"react-hooks/exhaustive-deps": "warn",
+		"max-len": [
+			"error",
+			{
+				"code": 120,
+				"ignoreStrings": true,
+				"ignoreTemplateLiterals": true,
+				"ignoreUrls": true,
+				"ignoreComments": true
+			}
+		],
+		"import/order": [
+			"error",
+			{
+				"groups": [
+					"builtin",
+					"external",
+					["parent", "sibling"],
+					"index",
+					"internal"
+				],
+				"pathGroups": [
+					{
+						"pattern": "@/app/**",
+						"group": "internal",
+						"position": "after"
+					}
+				],
+				"pathGroupsExcludedImportTypes": [],
+				"newlines-between": "always",
+				"alphabetize": {
+					"order": "asc",
+					"caseInsensitive": true
+				}
+			}
+		],
+		"semi": ["error", "always"],
+		"quotes": ["error", "double"],
+		"arrow-parens": ["error", "as-needed"],
+		"@typescript-eslint/quotes": ["error", "double"],
+		"react/jsx-curly-spacing": ["error", { "when": "never", "children": true }]
+	}
 }

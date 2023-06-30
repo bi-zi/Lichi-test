@@ -1,0 +1,49 @@
+.row__container {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+
+  &__item {
+    position: relative;
+    padding: 5px;
+    width: 33.33%;
+
+    &_image {
+      position: relative;
+      height: calc(0px + 810 * (100vw / 1920));
+
+      img {
+        border-radius: 5px;
+      }
+    }
+
+    &_info {
+      font-size: calc(10px + 10 * (100vw / 1920));
+
+      p {
+        margin: 15px 0 5px;
+      }
+
+      span {
+        font-weight: 700;
+      }
+
+      div {
+        display: inline-block;
+        margin: 5px 5px 0;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+      }
+    }
+
+    @media (max-width: 800px) {
+      width: 50%;
+
+      &_image {
+        position: relative;
+        height: calc(0px + 1200 * (100vw / 1920));
+      }
+    }
+  }
+}

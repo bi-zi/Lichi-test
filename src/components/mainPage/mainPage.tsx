@@ -1,109 +1,63 @@
 "use client";
+import { MutableRefObject, useCallback, useRef } from "react";
+import { VariableSizeList as List, VariableSizeList } from "react-window";
+
+import Row from "./Row/Row";
 import styles from "./style.module.scss";
-import Image from "next/image";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import AutoSizer from "react-virtualized-auto-sizer";
-import { VariableSizeList as List } from "react-window";
-import { useWindowResize } from "./useWindowResize";
+
+import { addMoreProducts } from "@/functions/addMoreProducts";
+import { useWindowWidth } from "@/hooks/useWindowWidth";
+import { aProductType } from "@/types/aProductTypes";
+
 interface MainPageProps {
-  boba: any;
+	data: aProductType[];
 }
 
-export const MainPage = ({ boba }: MainPageProps) => {
-  const products: any = [];
-  const aProduct = boba;
+interface SizeMap {
+	[index: number]: number;
+}
 
-  for (let index = 0; index < aProduct.length; index += 3) {
-    products.push(aProduct.slice(index, index + 3));
-  }
-  const extendedProducts = [...products, ...products, ...products];
+export const MainPage = ({ data }: MainPageProps) => {
+	const windowWidth: number | null = useWindowWidth();
 
-  const listRef = useRef();
-  const data = useMemo(() => extendedProducts.fill(true).map(() => 1), []);
-  const sizeMap = useRef({});
-  const setSize = useCallback((index, size) => {
-    sizeMap.current = { ...sizeMap.current, [index]: size };
-    listRef.current.resetAfterIndex(index);
-  }, []);
-  const getSize = (index) => sizeMap.current[index] || 50;
-  const [windowWidth] = useWindowResize();
+	const listRef = useRef<VariableSizeList | null>(null);
+	const sizeMap: MutableRefObject<SizeMap> = useRef<SizeMap>({});
 
-  const Row = ({ data, index, setSize, windowWidth, style }) => {
-    const rowRef = useRef();
+	const setSize = useCallback((index: number, size: number) => {
+		if (sizeMap.current && listRef.current) {
+			sizeMap.current = { ...sizeMap.current, [index]: size };
+			listRef.current.resetAfterIndex(index);
+		}
+	}, []);
 
-    useEffect(() => {
-      setSize(index, rowRef.current.getBoundingClientRect().height);
-    }, [setSize, index, windowWidth]);
+	const imgQuantity = windowWidth! > 800 ? 3 : 2;
 
-    return (
-      <div
-        className={styles.main__container + " " + index}
-        style={style}
-        key={index}
-        ref={rowRef}
-      >
-        {extendedProducts[index]?.map((item, i) => (
-          <div className={styles.main__container__item} key={i}>
-            <div className={styles.main__container__item_image}>
-              <Image
-                src={item?.photos?.[0].big}
-                fill
-                sizes="1"
-                priority
-                quality={75}
-                alt="фото"
-              />
-            </div>
+	const extendedProducts = addMoreProducts(data, imgQuantity);
 
-            <div className={styles.main__container__item_info}>
-              <p>{item?.name}</p>
-              <span>{item?.original_price?.toLocaleString()} руб.</span>
+	const getSize = (index: number) => sizeMap.current[index] || 50;
 
-              <br />
+	if (!windowWidth) return;
 
-              {[
-                item?.colors?.current?.value,
-                item?.colors?.other?.map((x: any) => x.value),
-              ]
-                .flat()
-                .map((color, index) => (
-                  <div
-                    key={index}
-                    style={{ backgroundColor: "#" + color }}
-                  ></div>
-                ))}
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  };
-
-  return (
-    <div className={styles.main}>
-      <AutoSizer>
-        {({ height, width }) => (
-          <List
-            height={height}
-            itemCount={extendedProducts.length}
-            itemSize={getSize}
-            width={width}
-            ref={listRef}
-            itemData={data}
-          >
-            {({ data, index, style }) => (
-              <div style={style}>
-                <Row
-                  data={data}
-                  index={index}
-                  setSize={setSize}
-                  windowWidth={windowWidth}
-                />
-              </div>
-            )}
-          </List>
-        )}
-      </AutoSizer>
-    </div>
-  );
+	return (
+		<div className={styles.main}>
+			<List
+				height={window!.innerHeight}
+				itemCount={extendedProducts.length}
+				itemSize={getSize}
+				width={"100vw"}
+				ref={listRef}
+			>
+				{({ index, style }) => (
+					<div style={style} className={"index - " + index}>
+						<Row
+							products={extendedProducts}
+							index={index}
+							setSize={setSize}
+							windowWidth={windowWidth}
+						/>
+					</div>
+				)}
+			</List>
+		</div>
+	);
 };
